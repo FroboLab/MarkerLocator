@@ -46,7 +46,7 @@ def webcam_pub():
     count = 0
     while not rospy.is_shutdown():
         (grabbed, frame) = cam.read()
-        if count % skip_images == 0:
+        if skip_images == 0 or count % skip_images == 0:
             time_captured = rospy.Time.now()
             frame = cv2.resize(frame, (0, 0), fx=1.0/image_downscale_factor, fy=1.0/image_downscale_factor)
             frame_gray = cv2.cvtColor(frame, cv2.cv.CV_RGB2GRAY)

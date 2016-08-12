@@ -167,7 +167,7 @@ class marker_locator_node():
 
 		# print debug info
 		if self.print_debug_messages == True:
-			print("Time: %.3f  Marker: %s  x: %8.3f  y:%8.3f  theta: %8.3f  quality: %8.3f  interval: %.3f" % (msg.header.stamp.to_sec(), pose_corrected.order, pose_corrected.x, pose_corrected.y, pose_corrected.theta, pose_corrected.quality, (time() - self.time_prev_image)))
+			print("Time: %.3f Seq: %ld  Marker: %s  x: %8.3f  y:%8.3f  theta: %8.3f  quality: %8.3f  interval: %.3f" % (msg.header.stamp.to_sec(), msg.header.seq, pose_corrected.order, pose_corrected.x, pose_corrected.y, pose_corrected.theta, pose_corrected.quality, (time() - self.time_prev_image)))
 			self.time_prev_image = time()
 
 	def updater(self):
