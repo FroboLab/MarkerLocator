@@ -79,10 +79,8 @@ class CameraDriver:
 		ym2 = int(ym + 50 * math.sin(orientation))
 		cv2.line(self.processed_frame, (xm, ym), (xm2, ym2), (255, 0, 0), 2)
 
-		cv2.imwrite("image.png", self.processed_frame)
-		#cv2.imshow('filterdemo', self.processed_frame)
-		#key = cv2.waitKey(1)
-		key = 0
+		cv2.imshow('filterdemo', self.processed_frame)
+		key = cv2.waitKey(1)
 
 		# Discard higher order bit, http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/py_image_display/py_image_display.html
 		key = key & 0xff
