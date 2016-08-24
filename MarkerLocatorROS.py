@@ -7,6 +7,7 @@ import math
 import numpy as np
 from time import time, strftime
 import os
+from distutils.version import LooseVersion # OpenCV version 2 vs. 3 detect
 
 # ros imports
 import rospy
@@ -37,22 +38,34 @@ class CameraDriver:
 		self.current_frame = None
 		self.processed_frame = None
 		self.running = True
+		self.busy = False
 
 		# Initialize trackers.
 		self.tracker = MarkerTracker(marker_order, marker_size, scaling_parameter)
 		self.location = MarkerPose(None, None, None, None, None)
 
 	def open_image_window(self):
-		cv2.namedWindow('filterdemo', cv2.cv.CV_WINDOW_AUTOSIZE)
+		if LooseVersion(cv2.__version__).version[0] == 2:
+			cv2.namedWindow('filterdemo', cv2.cv.CV_WINDOW_AUTOSIZE)
+		else:
+			cv2.namedWindow('filterdemo', cv2.WINDOW_AUTOSIZE)
 
 	def process_frame(self):
-		self.processed_frame = self.current_frame
-		frame_gray = self.current_frame
-		self.processed_frame = cv2.cvtColor(self.current_frame, cv2.cv.CV_GRAY2BGR)
-		
-		# Previous marker location is unknown, search in the entire image.
-		self.current_frame = self.tracker.locate_marker(frame_gray)
-		self.location = self.tracker.pose
+		if self.busy == False:
+			self.busy = True
+			self.processed_frame = self.current_frame
+			frame_gray = self.current_frame
+			if LooseVersion(cv2.__version__).version[0] == 2:
+				self.processed_frame = cv2.cvtColor(self.current_frame, cv2.cv.CV_GRAY2BGR)
+			else:
+				self.processed_frame = cv2.cvtColor(self.current_frame, cv2.COLOR_GRAY2BGR)
+	
+			# Previous marker location is unknown, search in the entire image.
+			#self.current_frame = self.tracker.locate_marker(frame_gray)
+			current_pose = self.tracker.locate_marker(frame_gray)
+			self.location = self.tracker.pose
+		else:
+			print 'skipping'
 
 	def show_processed_frame(self):
 		xm = self.location.x
@@ -65,16 +78,11 @@ class CameraDriver:
 		xm2 = int(xm + 50 * math.cos(orientation))
 		ym2 = int(ym + 50 * math.sin(orientation))
 		cv2.line(self.processed_frame, (xm, ym), (xm2, ym2), (255, 0, 0), 2)
+
 		cv2.imshow('filterdemo', self.processed_frame)
+		key = cv2.waitKey(1)
 
-	def reset_location(self):
-		# Reset all markers locations, forcing a full search on the next iteration.
-		self.location = MarkerPose(None, None, None, None, None)
-
-	def handle_keyboard_events(self):
-		# Listen for keyboard events and take relevant actions.
-		key = cv2.waitKey(100)
-		# Discard higher order bit, http://permalink.gmane.org/gmane.comp.lib.opencv.devel/410
+		# Discard higher order bit, http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/py_image_display/py_image_display.html
 		key = key & 0xff
 		if key == 27:  # Esc
 			self.running = False
@@ -86,7 +94,11 @@ class CameraDriver:
 			print("Saving image")
 			filename = strftime("%Y-%m-%d %H-%M-%S")
 			cv2.imwrite("output/%s.png" % filename, self.current_frame)
+		self.busy = False
 
+	def reset_location(self):
+		# Reset all markers locations, forcing a full search on the next iteration.
+		self.location = MarkerPose(None, None, None, None, None)
 
 class marker_locator_node():
 	def __init__(self):
@@ -152,7 +164,6 @@ class marker_locator_node():
 		self.cd.process_frame()
 		if self.show_image:
 			self.cd.show_processed_frame()
-			self.cd.handle_keyboard_events()
 
 		# publish the marker position
 		self.markerpose_msg.header.stamp = rospy.get_rostime()

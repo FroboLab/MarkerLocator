@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 import os
+from distutils.version import LooseVersion # OpenCV version 2 vs. 3 detect
 
 def set_camera_focus(device):
     # Disable autofocus
@@ -34,8 +35,12 @@ def webcam_pub():
     cam = cv2.VideoCapture(camera_device)
 
     # define camera
-    cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, camera_width)
-    cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, camera_height)
+    if LooseVersion(cv2.__version__).version[0] == 2:
+        cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, camera_width)
+        cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, camera_height)
+    else:
+        cam.set(cv2.CAP_PROP_FRAME_WIDTH, camera_width)
+        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, camera_height)
 
     bridge = CvBridge()
 
@@ -49,7 +54,10 @@ def webcam_pub():
         if skip_images == 0 or count % skip_images == 0:
             time_captured = rospy.Time.now()
             frame = cv2.resize(frame, (0, 0), fx=1.0/image_downscale_factor, fy=1.0/image_downscale_factor)
-            frame_gray = cv2.cvtColor(frame, cv2.cv.CV_RGB2GRAY)
+            if LooseVersion(cv2.__version__).version[0] == 2:
+                frame_gray = cv2.cvtColor(frame, cv2.cv.CV_RGB2GRAY)
+            else:
+                frame_gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
             msg = bridge.cv2_to_imgmsg(frame_gray, encoding="8UC1")
             msg.header.stamp = time_captured
             pub.publish(msg)
