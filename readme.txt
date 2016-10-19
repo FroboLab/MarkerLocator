@@ -25,6 +25,7 @@ PerspectiveTransform.py    Class for making perspective transformations
 readme.txt                 This file
 setup.py                   ROS/CATKIN Python setup file
 TrackerInWindowMode.py     Windowed tracker that is faster but doesn't handle entering and leaving markers well
+udp_server/                ROS based UDP server for publishing the markerlocator information in a generic format
 
 ** ROS **
 To run the MarkerLocator.py script as a ROS node you first need to make the
