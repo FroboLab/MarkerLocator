@@ -44,12 +44,6 @@ class CameraDriver:
 		self.tracker = MarkerTracker(marker_order, marker_size, scaling_parameter)
 		self.location = MarkerPose(None, None, None, None, None)
 
-	def open_image_window(self):
-		if LooseVersion(cv2.__version__).version[0] == 2:
-			cv2.namedWindow('filterdemo', cv2.cv.CV_WINDOW_AUTOSIZE)
-		else:
-			cv2.namedWindow('filterdemo', cv2.WINDOW_AUTOSIZE)
-
 	def process_frame(self):
 		if self.busy == False:
 			self.busy = True
@@ -93,7 +87,7 @@ class CameraDriver:
 			# save image
 			print("Saving image")
 			filename = strftime("%Y-%m-%d %H-%M-%S")
-			cv2.imwrite("output/%s.png" % filename, self.current_frame)
+			cv2.imwrite("markerlocator_image_%s.png" % filename, self.current_frame)
 		self.busy = False
 
 	def reset_location(self):
@@ -145,8 +139,6 @@ class marker_locator_node():
 
 		# instantiate camera driver
 		self.cd = CameraDriver(self.marker_order, marker_size, scaling_parameter)
-		if self.show_image:
-			self.cd.open_image_window()
 
 		# instantiate markerpose publisher
 		self.markerpose_msg = markerpose()
