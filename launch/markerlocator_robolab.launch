@@ -61,14 +61,14 @@
 
 		<node pkg="markerlocator" name="udp_server_6" type="UDPServer.py" output="screen">
 			<param name="markerpose_sub" value="/markerlocator/markerpose_6" />
-			<param name="udp_address" value="127.0.0.1" />
-			<param name="udp_port" value="5006" />
+			<param name="udp_address" value="fmcomp00.projectnet.wlan.sdu.dk" />
+			<param name="udp_port" value="50006" />
 		</node>
 
 		<node pkg="markerlocator" name="udp_server_7" type="UDPServer.py" output="screen">
 			<param name="markerpose_sub" value="/markerlocator/markerpose_7" />
-			<param name="udp_address" value="127.0.0.1" />
-			<param name="udp_port" value="5007" />
+			<param name="udp_address" value="fmcomp00.projectnet.wlan.sdu.dk" />
+			<param name="udp_port" value="50007" />
 		</node>
 
 	<!--/group-->

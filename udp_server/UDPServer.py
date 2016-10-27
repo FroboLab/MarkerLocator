@@ -51,13 +51,15 @@ UDP_PORT = ''
 def callback(data):
     secs = rospy.get_rostime().to_sec()
     
-    rospy.loginfo('%d %d %d %f %f %f' % (data.order, data.x, data.y, data.theta, data.quality, secs))
+    #rospy.loginfo('%d %d %d %f %f %f' % (data.order, data.x, data.y, data.theta, data.quality, secs))
 
     dataString = str(data.order) + ", " + str(data.x) + ", " + str(data.y) + ", " + str(data.theta) + ", " + str(data.quality) + ", " + str(secs)
 
+    '''
     print "UDP target IP:", UDP_IP
     print "UDP target port", UDP_PORT
     print "order: %d, x: %d, y: %d, theta: %f, quality: %f, secs: %f" % (data.order, data.x, data.y, data.theta, data.quality, secs)
+    '''
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(dataString, (UDP_IP, UDP_PORT))

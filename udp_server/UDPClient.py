@@ -38,8 +38,16 @@ Using the following sources:
 import socket
 import struct
 
-UDP_IP = "127.0.0.1"
-UDP_PORT = 5007
+UDP_NAME = 'robolab01.projectnet.wlan.sdu.dk'
+UDP_NAME = 'localhost'
+UDP_NAME = 'fmcomp00.projectnet.wlan.sdu.dk'
+UDP_IP = socket.gethostbyname_ex(UDP_NAME)
+UDP_IP = UDP_IP[2][0]
+UDP_PORT = 50006
+
+print UDP_NAME
+print UDP_IP
+print UDP_PORT
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
