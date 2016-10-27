@@ -34,6 +34,8 @@ Using the following sources:
  - https://wiki.python.org/moin/UdpCommunication 
 
  Author: Kristian Husum Terkildsen, krter12@student.sdu.dk/kristian.h.terkildsen@gmail.com
+
+ 2016-10-27 Kjeld Jensen <kjen@mmmi.sdu.dk> moved configuration to the ROS parameter server.
 '''
 
 import rospy
@@ -42,8 +44,9 @@ from markerlocator.msg import markerpose
 import socket
 import struct
 
-UDP_IP = "127.0.0.1"
-UDP_PORT = 5005
+UDP_IP = ''
+UDP_PORT = ''
+
 
 def callback(data):
     secs = rospy.get_rostime().to_sec()
@@ -60,10 +63,16 @@ def callback(data):
     sock.sendto(dataString, (UDP_IP, UDP_PORT))
 
 def listener():
+    global UDP_IP
+    global UDP_PORT
 
     rospy.init_node('listener', anonymous=True)
 
-    rospy.Subscriber('/markerlocator/markerpose', markerpose, callback)
+    topic = rospy.get_param("~markerpose_sub", '/markerlocator/markerpose') 
+    UDP_IP = rospy.get_param("~udp_address", "127.0.0.1") 
+    UDP_PORT = rospy.get_param("~udp_port", 5005) 
+
+    rospy.Subscriber(topic, markerpose, callback)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

@@ -32,7 +32,7 @@
 		<!-- captures images from the camera -->
 		<node pkg="markerlocator" name="markercapture" type="MarkerCaptureROS.py" output="screen">
 			<param name="markerimage_pub" value="/markerlocator/image_raw" />
-			<param name="camera_device" value="1" /> <!-- linux device number -->
+			<param name="camera_device" value="0" /> <!-- linux device number -->
 			<param name="camera_width" value="1920" /> <!-- pixels -->
 			<param name="camera_height" value="1080" /> <!-- pixels -->
 			<param name="update_rate" value="30" /> <!-- Hz -->
@@ -46,7 +46,7 @@
 			<param name="marker_order" value="6" />
 			<param name="marker_size" value="26" /> <!-- pixels (before downscaling) -->
 			<param name="show_image" value="True" />
-			<param name="print_debug_messages" value="True" />
+			<param name="print_debug_messages" value="False" />
 		</node>
 
 		<!-- locate a marker of order 7 -->
@@ -56,8 +56,21 @@
 			<param name="marker_order" value="7" />
 			<param name="marker_size" value="26" /> <!-- pixels (before downscaling) -->
 			<param name="show_image" value="True" />
-			<param name="print_debug_messages" value="True" />
+			<param name="print_debug_messages" value="False" />
 		</node>
+
+		<node pkg="markerlocator" name="udp_server_6" type="UDPServer.py" output="screen">
+			<param name="markerpose_sub" value="/markerlocator/markerpose_6" />
+			<param name="udp_address" value="127.0.0.1" />
+			<param name="udp_port" value="5006" />
+		</node>
+
+		<node pkg="markerlocator" name="udp_server_7" type="UDPServer.py" output="screen">
+			<param name="markerpose_sub" value="/markerlocator/markerpose_7" />
+			<param name="udp_address" value="127.0.0.1" />
+			<param name="udp_port" value="5007" />
+		</node>
+
 	<!--/group-->
 </launch>
 
